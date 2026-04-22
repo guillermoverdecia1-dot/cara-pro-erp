@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>CARA PRO ONLINE</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #0b1220;
+  color: white;
+  margin: 0;
+}
+
+header {
+  background: #1e293b;
+  padding: 15px;
+  text-align: center;
+}
+
+.container {
+  padding: 15px;
+}
+
+textarea, input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 10px;
+  background: #2563eb;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+🌐 SISTEMA CARA PRO ONLINE
+</header>
+
+<div class="container">
+
+<h3>📦 Productos importados</h3>
+<textarea id="importados"></textarea>
+
+<h3>🟩 Productos locales</h3>
+<textarea id="locales"></textarea>
+
+<h3>🔧 Servicios (CUP)</h3>
+<textarea id="servicios"></textarea>
+
+<button onclick="generar()">🚀 Generar Factura Online</button>
+
+<div id="resultado"></div>
+
+</div>
+
+<script>
+
+// 🌍 TASA EN TIEMPO REAL (API SIMPLE)
+async function getRate() {
+  try {
+    let res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=CUP");
+    let data = await res.json();
+    return data.rates.CUP;
+  } catch {
+    return 490; // fallback si no hay internet
+  }
+}
+
+async function generar() {
+
+  let rate = await getRate();
+
+  let imp = document.getElementById("importados").value;
+  let loc = document.getElementById("locales").value;
+  let ser = document.getElementById("servicios").value;
+
+  // 🔥 simulación base (luego se conecta real a productos)
+  let importados = 150000;
+  let locales = 70000;
+  let servicios = 30000;
+
+  let subtotal = importados + locales + servicios;
+
+  let onat = subtotal * 0.15;
+  let total = subtotal - onat;
+
+  let usd = total / rate;
+
+  document.getElementById("resultado").innerHTML = `
+
+  <div class="card">
+    <h3>🧾 FACTURA CLIENTE</h3>
+    CUP: ${total.toFixed(0)}<br>
+    USD: ${usd.toFixed(2)}<br>
+    TASA EN TIEMPO REAL: ${rate.toFixed(2)}
+  </div>
+
+  <div class="card">
+    <h3>📊 FICHA DE COSTOS</h3>
+    Importados: ${importados}<br>
+    Locales: ${locales}<br>
+    Servicios: ${servicios}
+  </div>
+
+  <div class="card">
+    <h3>🛠 ORDEN DE TRABAJO</h3>
+    Instalación / reparación / revisión técnica
+  </div>
+
+  <div class="card">
+    <h3>📋 CONFORMIDAD</h3>
+    Cliente acepta el trabajo realizado
+  </div>
+
+  `;
+}
+
+</script>
+
+</body>
+</html>
